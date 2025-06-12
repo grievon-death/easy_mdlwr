@@ -37,3 +37,10 @@ pub struct UserSerialize {
     #[serde(serialize_with = "bson::serde_helpers::serialize_bson_datetime_as_rfc3339_string")]
     pub last_login: Option<DateTime>,
 }
+
+
+/// Estrutura para serialização do token de login
+#[derive(Debug, Serialize)]
+pub struct Login {
+    pub token: String,
+}

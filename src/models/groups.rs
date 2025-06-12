@@ -33,5 +33,5 @@ pub struct GroupSerialize {
     pub permissions: Vec<PermissionSerialize>,
     pub actions: Actions,
     #[serde(serialize_with="bson::serde_with::serialize_bson_datetime_as_rfc3339_string")]
-    pub craeted_at: DateTime,
+    pub created_at: DateTime,
 }
