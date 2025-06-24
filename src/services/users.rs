@@ -1,4 +1,5 @@
 use bson::de;
+use bson::oid::ObjectId;
 use log::{debug, info, error};
 use mongodb::bson::{Document, doc};
 use futures_util::stream::TryStreamExt;
@@ -16,7 +17,7 @@ pub struct UserService{
     }
 
     /// Captura um usuário pelo username.
-    pub async fn get_one(&self, username: &String) -> Option<UserModel> {
+    pub async fn get_by_username(&self, username: &String) -> Option<UserModel> {
         let data = self.service
             .user_model
             .find_one(doc!{"username": username})
@@ -34,6 +35,25 @@ pub struct UserService{
         }
     }
 
+    /// Captura o usuário pelo ID
+    pub async fn get_by_id(&self, id: &ObjectId) -> Option<UserSerialize> {
+        let data = self.service
+            .user_serialize
+            .find_one(doc!{"_id": id})
+            .await;
+
+        match data {
+            Ok(user) => {
+                debug!("Try to get user {} in database.", id);
+                user
+            },
+            Err(e) => {
+                error!("Can not filter {} in users, cause {}.", id, e);
+                None
+            }
+        }
+    }
+
     /// Altera o token na coleção de usuários.
     pub async fn set_token(&self, username: &String, token: &String) {
         let query = doc!{
@@ -44,7 +64,7 @@ pub struct UserService{
                 "token": token,
             }
         };
-    
+
         match self.service
             .user_model
             .update_one(query, update)
